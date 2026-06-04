@@ -6,9 +6,10 @@ import type { Ball, GameSettings, GameWorld } from "@/types/game";
 type Props = {
   world: GameWorld;
   settings: Pick<GameSettings, "showLaneGuides" | "showTrajectoryGuide">;
+  compact?: boolean;
 };
 
-export function GameCanvas({ world, settings }: Props) {
+export function GameCanvas({ world, settings, compact = false }: Props) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -75,7 +76,7 @@ export function GameCanvas({ world, settings }: Props) {
     <canvas
       ref={canvasRef}
       aria-label="Campo de juego Math Pong"
-      className="h-full w-full rounded-lg border border-white/10 bg-slate-950"
+      className={`${compact ? "max-h-[28dvh]" : ""} h-auto w-full rounded-lg border border-white/10 bg-slate-950`}
       style={{ aspectRatio: `${world.width} / ${world.height}` }}
     />
   );

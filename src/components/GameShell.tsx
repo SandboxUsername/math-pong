@@ -154,24 +154,34 @@ export function GameShell() {
   }
 
   return (
-    <main className="min-h-dvh bg-[#0a0f1f] px-3 py-4 text-white sm:px-5">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 lg:grid lg:grid-cols-[minmax(0,1fr)_390px]">
-        <section className="flex flex-col gap-3">
-          <div className="flex items-center justify-between gap-3">
+    <main
+      className={`${running ? "h-dvh overflow-hidden px-2 py-2" : "min-h-dvh px-3 py-4 sm:px-5"} bg-[#0a0f1f] text-white`}
+    >
+      <div
+        className={`mx-auto flex w-full max-w-6xl flex-col lg:grid lg:grid-cols-[minmax(0,1fr)_390px] ${
+          running ? "h-full gap-2 lg:gap-4" : "gap-4"
+        }`}
+      >
+        <section className={`flex min-h-0 flex-col ${running ? "gap-2" : "gap-3"}`}>
+          <div className={`flex items-center justify-between gap-3 ${running ? "shrink-0" : ""}`}>
             <div>
-              <h1 className="text-3xl font-black leading-none text-white">Math Pong</h1>
-              <p className="mt-1 text-sm font-semibold text-teal-200">{statusText}</p>
+              <h1 className={`${running ? "text-xl" : "text-3xl"} font-black leading-none text-white`}>
+                Math Pong
+              </h1>
+              <p className={`${running ? "mt-0 text-xs" : "mt-1 text-sm"} font-semibold text-teal-200`}>
+                {statusText}
+              </p>
             </div>
-            <div className="rounded-lg border border-white/10 bg-white/8 px-3 py-2 text-right">
-              <p className="text-xs font-semibold uppercase text-slate-300">Mejor tiempo</p>
-              <p className="text-lg font-black">{formatTime(highScore.survivalMs)}</p>
+            <div className={`rounded-lg border border-white/10 bg-white/8 text-right ${running ? "px-2 py-1" : "px-3 py-2"}`}>
+              <p className="text-[10px] font-semibold uppercase text-slate-300 sm:text-xs">Mejor tiempo</p>
+              <p className={`${running ? "text-sm" : "text-lg"} font-black`}>{formatTime(highScore.survivalMs)}</p>
             </div>
           </div>
 
-          <Scoreboard score={world.score} elapsedMs={world.elapsedMs} highScore={highScore} />
+          <Scoreboard score={world.score} elapsedMs={world.elapsedMs} highScore={highScore} compact={running} />
 
-          <div className="relative">
-            <GameCanvas world={world} settings={settings} />
+          <div className={`relative min-h-0 ${running ? "shrink overflow-hidden lg:max-h-none" : ""}`}>
+            <GameCanvas world={world} settings={settings} compact={running} />
             {world.status !== "running" && (
               <div className="absolute inset-0 flex items-center justify-center p-4">
                 <div className="max-w-xs rounded-lg border border-white/15 bg-slate-950/85 p-4 text-center shadow-2xl">
@@ -191,15 +201,15 @@ export function GameShell() {
           </div>
         </section>
 
-        <aside className="flex flex-col gap-3">
-          <OperationGrid operations={operations} />
-          <AnswerInput value={answer} active={answerInputActive} onChange={handleAnswer} />
+        <aside className={`flex min-h-0 flex-col ${running ? "gap-2" : "gap-3"}`}>
+          <OperationGrid operations={operations} compact={running} />
+          <AnswerInput value={answer} active={answerInputActive} compact={running} onChange={handleAnswer} />
 
-          <div className="grid grid-cols-2 gap-2">
+          <div className={`grid grid-cols-2 ${running ? "gap-1.5" : "gap-2"}`}>
             <button
               type="button"
               onClick={handlePrimaryAction}
-              className="h-12 rounded-lg bg-teal-300 px-4 text-base font-black text-slate-950 transition active:scale-[0.98]"
+              className={`${running ? "h-10 text-sm" : "h-12 text-base"} rounded-lg bg-teal-300 px-4 font-black text-slate-950 transition active:scale-[0.98]`}
             >
               {world.status === "ready" ? "Empezar" : "Reiniciar"}
             </button>
@@ -207,7 +217,7 @@ export function GameShell() {
               <button
                 type="button"
                 onClick={handlePauseCancel}
-                className="h-12 rounded-lg border border-white/15 bg-white/10 px-4 text-base font-black text-white transition active:scale-[0.98]"
+                className={`${running ? "h-10 text-sm" : "h-12 text-base"} rounded-lg border border-white/15 bg-white/10 px-4 font-black text-white transition active:scale-[0.98]`}
               >
                 {world.status === "paused" ? "Seguir" : "Pausar"}
               </button>
@@ -219,13 +229,13 @@ export function GameShell() {
             <button
               type="button"
               onClick={handleCancelGame}
-              className="h-12 rounded-lg border border-rose-300/40 bg-rose-300/12 px-4 text-base font-black text-rose-50 transition active:scale-[0.98]"
+              className="h-10 rounded-lg border border-rose-300/40 bg-rose-300/12 px-4 text-sm font-black text-rose-50 transition active:scale-[0.98]"
             >
               Cancelar
             </button>
           )}
 
-          <SettingsPanel settings={settings} disabled={running} onChange={updateSettings} />
+          {!running && <SettingsPanel settings={settings} disabled={running} onChange={updateSettings} />}
         </aside>
       </div>
     </main>

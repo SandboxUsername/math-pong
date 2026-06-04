@@ -5,10 +5,11 @@ import { useEffect, useRef } from "react";
 type Props = {
   value: string;
   active: boolean;
+  compact?: boolean;
   onChange: (value: string) => void;
 };
 
-export function AnswerInput({ value, active, onChange }: Props) {
+export function AnswerInput({ value, active, compact = false, onChange }: Props) {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -19,7 +20,9 @@ export function AnswerInput({ value, active, onChange }: Props) {
 
   return (
     <label className="block">
-      <span className="mb-2 block text-sm font-semibold text-slate-200">Respuesta</span>
+      <span className={`${compact ? "mb-1 text-xs" : "mb-2 text-sm"} block font-semibold text-slate-200`}>
+        Respuesta
+      </span>
       <input
         ref={inputRef}
         value={value}
@@ -37,7 +40,7 @@ export function AnswerInput({ value, active, onChange }: Props) {
           }, 0);
         }}
         onChange={(event) => onChange(event.target.value.replace(/\D/g, ""))}
-        className="h-14 w-full rounded-lg border border-white/15 bg-white px-4 text-center text-3xl font-black text-slate-950 outline-none ring-4 ring-transparent transition focus:ring-teal-300/45 disabled:cursor-not-allowed disabled:bg-slate-300"
+        className={`${compact ? "h-11 text-2xl" : "h-14 text-3xl"} w-full rounded-lg border border-white/15 bg-white px-4 text-center font-black text-slate-950 outline-none ring-4 ring-transparent transition focus:ring-teal-300/45 disabled:cursor-not-allowed disabled:bg-slate-300`}
       />
     </label>
   );
