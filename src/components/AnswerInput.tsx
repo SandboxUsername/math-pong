@@ -14,13 +14,13 @@ export function AnswerInput({ value, active, compact = false, onChange }: Props)
 
   useEffect(() => {
     if (active && !isEditingSettings()) {
-      inputRef.current?.focus();
+      focusWithoutScroll(inputRef.current);
     }
-  }, [active, value]);
+  }, [active]);
 
   return (
     <label className="block">
-      <span className={`${compact ? "mb-1 text-xs" : "mb-2 text-sm"} block font-semibold text-slate-200`}>
+      <span className={`${compact ? "active-mobile-answer-label mb-1 text-xs" : "mb-2 text-sm"} block font-semibold text-slate-200`}>
         Respuesta
       </span>
       <input
@@ -32,15 +32,8 @@ export function AnswerInput({ value, active, compact = false, onChange }: Props)
         autoComplete="off"
         enterKeyHint="done"
         aria-label="Respuesta numerica"
-        onBlur={() => {
-          window.setTimeout(() => {
-            if (active && !isEditingSettings()) {
-              inputRef.current?.focus();
-            }
-          }, 0);
-        }}
         onChange={(event) => onChange(event.target.value.replace(/\D/g, ""))}
-        className={`${compact ? "h-11 text-2xl" : "h-14 text-3xl"} w-full rounded-lg border border-white/15 bg-white px-4 text-center font-black text-slate-950 outline-none ring-4 ring-transparent transition focus:ring-teal-300/45 disabled:cursor-not-allowed disabled:bg-slate-300`}
+        className={`${compact ? "active-mobile-answer-input h-11 text-2xl" : "h-14 text-3xl"} w-full rounded-lg border border-white/15 bg-white px-4 text-center font-black text-slate-950 outline-none ring-4 ring-transparent transition focus:ring-teal-300/45 disabled:cursor-not-allowed disabled:bg-slate-300`}
       />
     </label>
   );
@@ -48,4 +41,14 @@ export function AnswerInput({ value, active, compact = false, onChange }: Props)
 
 function isEditingSettings() {
   return document.activeElement?.closest("[data-settings-panel]") !== null;
+}
+
+function focusWithoutScroll(input: HTMLInputElement | null) {
+  if (!input) return;
+
+  try {
+    input.focus({ preventScroll: true });
+  } catch {
+    input.focus();
+  }
 }

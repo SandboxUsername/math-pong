@@ -12,7 +12,7 @@ export const defaultSettings: GameSettings = {
   },
   easyMovementMultiplier: 1,
   hardMovementMultiplier: 2,
-  ballSpeed: 2.9,
+  ballSpeed: 0.5,
   showLaneGuides: true,
   showTrajectoryGuide: true,
   durationSeconds: null

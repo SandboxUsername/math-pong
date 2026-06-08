@@ -1,11 +1,13 @@
 "use client";
 
 import { actionLabel } from "@/lib/operations";
-import type { Operation } from "@/types/game";
+import type { Operation, OperationKind } from "@/types/game";
 
 type Props = {
   operations: Operation[];
   compact?: boolean;
+  kinds?: OperationKind[];
+  gameplay?: boolean;
 };
 
 const accentByKind: Record<Operation["kind"], string> = {
@@ -15,42 +17,90 @@ const accentByKind: Record<Operation["kind"], string> = {
   divide: "border-rose-300/40 bg-rose-300/12"
 };
 
-export function OperationGrid({ operations, compact = false }: Props) {
-  if (operations.length === 0) {
-    return (
-      <section className="grid grid-cols-2 gap-2">
-        {["Sube poco", "Baja poco", "Sube mucho", "Baja mucho"].map((label) => (
-          <div
-            key={label}
-            className={`${compact ? "min-h-14 p-2" : "min-h-24 p-3"} rounded-lg border border-white/10 bg-white/7`}
-          >
-            <p className={`${compact ? "text-[10px]" : "text-xs"} font-semibold uppercase tracking-wide text-slate-200`}>
-              {label}
-            </p>
-            <p className={`${compact ? "mt-1 text-xl" : "mt-2 text-3xl sm:text-4xl"} font-black leading-none text-white`}>
-              ...
-            </p>
-          </div>
-        ))}
-      </section>
-    );
-  }
+const placeholderByKind: Record<OperationKind, string> = {
+  add: "+",
+  subtract: "-",
+  multiply: "x",
+  divide: "÷"
+};
 
+const arrowByKind: Record<OperationKind, string> = {
+  add: "↑",
+  subtract: "↓",
+  multiply: "↑↑",
+  divide: "↓↓"
+};
+
+export function OperationGrid({
+  operations,
+  compact = false,
+  kinds = ["add", "subtract", "multiply", "divide"],
+  gameplay = false
+}: Props) {
   return (
     <section className={`grid grid-cols-2 ${compact ? "gap-1.5" : "gap-2"}`}>
-      {operations.map((operation) => (
-        <div
-          key={operation.id}
-          className={`${compact ? "min-h-14 p-2" : "min-h-24 p-3"} rounded-lg border ${accentByKind[operation.kind]}`}
-        >
-          <p className={`${compact ? "text-[10px]" : "text-xs"} font-semibold uppercase tracking-wide text-slate-200`}>
-            {actionLabel(operation.action)}
-          </p>
-          <p className={`${compact ? "mt-1 text-xl" : "mt-2 text-3xl sm:text-4xl"} font-black leading-none text-white`}>
-            {operation.label}
-          </p>
-        </div>
-      ))}
+      {kinds.map((kind) => {
+        const operation = operations.find((candidate) => candidate.kind === kind);
+        return (
+          <OperationTile
+            key={operation?.id ?? kind}
+            compact={compact}
+            gameplay={gameplay}
+            kind={kind}
+            operation={operation}
+          />
+        );
+      })}
     </section>
   );
+}
+
+type TileProps = {
+  compact: boolean;
+  gameplay: boolean;
+  kind: OperationKind;
+  operation?: Operation;
+};
+
+function OperationTile({ compact, gameplay, kind, operation }: TileProps) {
+  const label = operation ? actionLabel(operation.action) : actionLabel(actionFromKind(kind));
+
+  return (
+    <div
+      className={`${compact ? "min-h-12 p-2" : "min-h-24 p-3"} rounded-lg border ${
+        accentByKind[kind]
+      }`}
+    >
+      {gameplay ? (
+        <div className="flex h-full items-center gap-2">
+          <span className="w-8 shrink-0 text-center text-xl font-black leading-none text-white">
+            {arrowByKind[kind]}
+          </span>
+          <span className="min-w-0 flex-1 text-2xl font-black leading-none text-white">
+            {operation?.label ?? placeholderByKind[kind]}
+          </span>
+        </div>
+      ) : (
+        <>
+          <p className={`${compact ? "text-[10px]" : "text-xs"} font-semibold uppercase tracking-wide text-slate-200`}>
+            {label}
+          </p>
+          <p className={`${compact ? "mt-1 text-xl" : "mt-2 text-3xl sm:text-4xl"} font-black leading-none text-white`}>
+            {operation?.label ?? "..."}
+          </p>
+        </>
+      )}
+    </div>
+  );
+}
+
+function actionFromKind(kind: OperationKind) {
+  const actions = {
+    add: "smallUp",
+    subtract: "smallDown",
+    multiply: "bigUp",
+    divide: "bigDown"
+  } as const;
+
+  return actions[kind];
 }

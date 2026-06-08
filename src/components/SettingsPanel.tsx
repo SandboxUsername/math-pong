@@ -28,9 +28,8 @@ export function SettingsPanel({ settings, disabled, onChange }: Props) {
   }
 
   return (
-    <details className="rounded-lg border border-white/10 bg-white/7 p-3" data-settings-panel>
-      <summary className="cursor-pointer select-none text-sm font-bold text-white">Ajustes</summary>
-      <div className="mt-4 space-y-4">
+    <div className="rounded-lg border border-white/10 bg-white/7 p-3" data-settings-panel>
+      <div className="space-y-4">
         <div className="grid grid-cols-2 gap-3">
           <ToggleField
             disabled={disabled}
@@ -110,7 +109,7 @@ export function SettingsPanel({ settings, disabled, onChange }: Props) {
           ))}
         </div>
       </div>
-    </details>
+    </div>
   );
 }
 
